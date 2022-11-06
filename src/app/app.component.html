@@ -1,0 +1,11 @@
+<!-- <app-header (selectedMenu)="onMenuSelected($event)"></app-header> -->
+<app-header></app-header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 my-3">
+      <!-- <app-recipe *ngIf="showComp === 'Recipe'"></app-recipe>
+      <shopping-list *ngIf="showComp === 'Shopping List'"></shopping-list> -->
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
