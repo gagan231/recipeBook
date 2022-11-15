@@ -28,7 +28,15 @@ import { SharedModule } from './shared/shared.module';
 import { CoreModules } from './core.module';
 // import { AuthModule } from './auth/auth.module';
 import { StoreModule } from '@ngrx/store';
-import { shoppingListReducer } from './shopping-list/shopping-list.reducer';
+import { EffectsModule } from '@ngrx/effects';
+// import { shoppingListReducer } from './shopping-list/shopping-list.reducer';
+// import { authReducer } from './auth/store/auth.reducer';
+import * as fromAppReducer from './store/app.reducer';
+import { AuthEffects } from './auth/store/auth.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { RecipeEffects } from './recipe/store/recipe.effects';
 
 @NgModule({
   declarations: [
@@ -49,7 +57,7 @@ import { shoppingListReducer } from './shopping-list/shopping-list.reducer';
     // PlaceholderDirective
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     // FormsModule,
     AppRouting,
     HttpClientModule,
@@ -58,7 +66,11 @@ import { shoppingListReducer } from './shopping-list/shopping-list.reducer';
     SharedModule,
     CoreModules,
     // AuthModule
-    StoreModule.forRoot({shoppingList: shoppingListReducer}),
+    // StoreModule.forRoot({shoppingList: shoppingListReducer, auth: authReducer}),
+    StoreModule.forRoot(fromAppReducer.appReducer),
+    EffectsModule.forRoot([AuthEffects, RecipeEffects]),
+    StoreDevtoolsModule.instrument({logOnly: environment.production}),
+    StoreRouterConnectingModule.forRoot()
   ],
   providers: [
     // ShoppingListService, RecipeService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
