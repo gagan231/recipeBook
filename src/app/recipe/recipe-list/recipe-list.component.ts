@@ -1,8 +1,11 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, map } from 'rxjs';
 import { Recipe } from '../recipe.model';
-import { RecipeService } from '../recipe.service';
+// import { RecipeService } from '../recipe.service';
+import { Store } from '@ngrx/store';
+import * as fromApp from '../../store/app.reducer';
+import * as RecipeActions from '../../recipe/store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-list',
@@ -19,15 +22,29 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   //   new Recipe('Another test recipe', 'simple test desc', 'https://ichef.bbci.co.uk/food/ic/food_16x9_832/recipes/lentil_and_chickpea_31510_16x9.jpg')
   // ];
 
-  constructor(private recipeService: RecipeService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    // private recipeService: RecipeService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private store: Store<fromApp.AppState>
+    ) { }
 
   ngOnInit(): void {
-    this.recipeSubs = this.recipeService.recipeSelected.subscribe(
+    this.recipeSubs = this.store.select('recipe')
+    .pipe(
+      map(recipeState => recipeState.recipes)
+    )
+    .subscribe(
       (recipes: Recipe[]) => {
         this.recipes = recipes;
       }
     )
-    this.recipes = this.recipeService.getRecipes();
+    // this.recipeSubs = this.recipeService.recipeSelected.subscribe(
+    //   (recipes: Recipe[]) => {
+    //     this.recipes = recipes;
+    //   }
+    // )
+    // this.recipes = this.recipeService.getRecipes();
   }
 
   // onRecipeAdded(event: Recipe){
